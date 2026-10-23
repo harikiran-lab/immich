@@ -1705,7 +1705,7 @@
   "play_motion_photo": "Play Motion Photo",
   "play_or_pause_video": "Play or pause video",
   "play_original_video": "Play original video",
-  "play_original_video_setting_description": "Prefer playback of original videos rather than transcoded videos. If original asset is not compatible it may not playback correctly.",
+  "play_original_video_setting_description": "Try the original video first. If playback fails, automatically use the transcoded video or real-time transcoding when enabled.",
   "play_transcoded_video": "Play transcoded video",
   "please_auth_to_access": "Please authenticate to access",
   "plugin_method_filter_type": "Filter",
