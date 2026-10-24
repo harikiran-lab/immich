@@ -35,7 +35,7 @@ jobs:
         run: pnpm --filter immich-web check:svelte
       - run: pnpm --filter immich-web check:typescript
       - name: Existing transcoding command regression tests
-        run: pnpm --filter immich test --run src/services/media.service.spec.ts src/repositories/media-color.spec.ts src/services/asset-media.service.spec.ts
+        run: pnpm --filter immich test --run src/services/media.service.spec.ts src/repositories/media-color.spec.ts src/services/asset-media.service.spec.ts src/utils/media-rotation.spec.ts
 
   publish:
     needs: test

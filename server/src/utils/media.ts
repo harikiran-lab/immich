@@ -747,6 +747,23 @@ export class NvencHwDecodeConfig extends NvencSwDecodeConfig {
     return ['-hwaccel', 'cuda', '-hwaccel_output_format', 'cuda', '-noautorotate', ...this.getInputThreadOptions()];
   }
 
+  getCommand(target: TranscodeTarget, video: VideoStreamInfo, audio?: AudioStreamInfo, format?: VideoFormat) {
+    const command = super.getCommand(target, video, audio, format);
+    if ([TranscodeTarget.All, TranscodeTarget.Video].includes(target) && this.getRotationFilter(video)) {
+      // Clear the matrix only when rotating pixels, never when copying video.
+      command.inputOptions.push('-display_rotation', '0');
+    }
+    return command;
+  }
+
+  getHlsCommand(options: HlsCommandOptions, video: VideoStreamInfo, audio?: AudioStreamInfo) {
+    const command = super.getHlsCommand(options, video, audio);
+    if ([TranscodeTarget.All, TranscodeTarget.Video].includes(options.target) && this.getRotationFilter(video)) {
+      command.unshift('-display_rotation', '0');
+    }
+    return command;
+  }
+
   // -noautorotate keeps frames in their stored orientation
   isFrameVertical(videoStream: VideoStreamInfo) {
     return videoStream.height > videoStream.width;
@@ -762,7 +779,28 @@ export class NvencHwDecodeConfig extends NvencSwDecodeConfig {
     if (options.length > 0) {
       options[options.length - 1] += ':format=nv12';
     }
+    const rotation = this.getRotationFilter(videoStream);
+    if (rotation) {
+      // Scale in stored orientation first, then rotate the finished SDR frame.
+      // FFmpeg 8 no longer reliably preserves a display matrix with noautorotate.
+      options.push(rotation);
+    }
     return options;
+  }
+
+  private getRotationFilter(videoStream: VideoStreamInfo): string | undefined {
+    const rotation = ((videoStream.rotation % 360) + 360) % 360;
+    switch (rotation) {
+      case 90: {
+        return 'transpose_cuda=dir=cclock';
+      }
+      case 180: {
+        return 'transpose_cuda=dir=reversal';
+      }
+      case 270: {
+        return 'transpose_cuda=dir=clock';
+      }
+    }
   }
 
   getToneMapping(videoStream: VideoStreamInfo) {

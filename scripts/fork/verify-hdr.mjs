@@ -195,3 +195,5 @@ try {
 } finally {
   rmSync(dir, { recursive: true, force: true });
 }
+
+await import("./verify-rotation.mjs");

@@ -127,6 +127,7 @@ RUN ln -s ../../cli/bin/immich server/bin/immich
 COPY LICENSE /licenses/LICENSE.txt
 COPY LICENSE /LICENSE
 COPY scripts/fork/verify-hdr.mjs ./server/bin/verify-hdr.mjs
+COPY scripts/fork/verify-rotation.mjs ./server/bin/verify-rotation.mjs
 
 ENV PATH="${PATH}:/usr/src/app/server/bin"
 

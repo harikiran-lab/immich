@@ -10,6 +10,11 @@ database migrations and does not change original media.
   Version 8 includes the upstream correction for the CUDA HLG reference-white bug
   ([jellyfin-ffmpeg#775](https://github.com/jellyfin/jellyfin-ffmpeg/issues/775)).
   NVDEC decoding, CUDA tone mapping and NVENC encoding remain available.
+- NVIDIA hardware decoding bakes quarter-turn and half-turn rotation into CUDA
+  frames after scaling and tone mapping. This avoids FFmpeg 8 dropping the
+  portrait display matrix. Video-copy operations retain the original matrix.
+  The GPU smoke test checks HLG/PQ portrait dimensions and quadrant orientation
+  for -90°, +90° and 180°, in addition to brightness.
 - When FFmpeg exposes HEVC HDR color metadata only on decoded frames, the server
   recovers it from a bounded 32-packet prefix. Known stream metadata takes precedence;
   ordinary untagged 8-bit video does not incur this extra decoding step.
