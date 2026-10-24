@@ -30,7 +30,10 @@ for (const filter of ["tonemapx", "tonemap_cuda", "scale_cuda"])
 assert.ok(run(ffmpeg, ["-hide_banner", "-encoders"]).includes("h264_nvenc"));
 
 const dir = mkdtempSync(join(tmpdir(), "immich-hdr-"));
-const pixels = 64 * 64;
+// NVDEC rejects tiny HEVC fixtures (some GPUs require a width of at least 144).
+const width = 256;
+const height = 256;
+const pixels = width * height;
 const raw = Buffer.alloc(pixels * 3);
 for (let i = 0; i < pixels * 1.5; i++) raw.writeUInt16LE(512, i * 2);
 // Three frames let HEVC's delayed decoder expose VUI metadata during probing.
@@ -99,7 +102,7 @@ try {
       "-pixel_format",
       "yuv420p10le",
       "-video_size",
-      "64x64",
+      `${width}x${height}`,
       "-framerate",
       "1",
       "-i",
