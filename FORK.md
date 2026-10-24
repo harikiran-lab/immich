@@ -19,6 +19,10 @@ database migrations and does not change original media.
   Aborted loads and stale errors from a previous video do not trigger fallback.
 - The player keeps the menu's playback mode in sync, preserves playback position
   and play/pause intent, and tries the original again for the next asset.
+- Encoded playback requires cache revalidation, and the web URL bypasses old
+  day-long cache entries. Regenerating a video keeps the thumbnail hash unchanged;
+  previously this could leave the old dark copy in a browser even after a fresh
+  encode was correct. Unchanged files can still reuse cached bytes after validation.
 
 This changes the **web player**. Existing official mobile apps are not modified.
 Fallback handles reported playback failures; it cannot detect a browser that
